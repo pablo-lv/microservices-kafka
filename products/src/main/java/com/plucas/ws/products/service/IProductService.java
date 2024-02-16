@@ -4,5 +4,5 @@ import com.plucas.ws.products.dto.ProductRequestDTO;
 
 public interface IProductService {
 
-    String createProduct(ProductRequestDTO product);
+    String createProduct(ProductRequestDTO product) throws Exception;
 }

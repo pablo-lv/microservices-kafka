@@ -24,22 +24,27 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public String createProduct(ProductRequestDTO product) {
+    public String createProduct(ProductRequestDTO product) throws Exception {
         var productId = UUID.randomUUID().toString();
         //TODO: persist product details into database table before publishing an Event
 
         var event = new ProductCreatedEvent(productId, product.getTitle(), product.getPrice(), product.getQuantity());
 
-        CompletableFuture<SendResult<String, ProductCreatedEvent>> future =
-                kafkaTemplate.send("product-created-events-topic", productId, event);
+        SendResult<String, ProductCreatedEvent> result = kafkaTemplate.send("product-created-events-topic", productId, event).get();
+        log.info("ProductCreatedEvent published successfully: Topic: " + result.getRecordMetadata().topic()+ " - Partition: " + result.getRecordMetadata().partition() + " - Offset: " + result.getRecordMetadata().offset());
 
-        future.whenComplete((result, ex) -> {
-            if (ex == null) {
-                log.info("ProductCreatedEvent published successfully");
-            } else {
-                log.error("ProductCreatedEvent failed to publish" + ex.getMessage());
-            }
-        });
+//        CompletableFuture<SendResult<String, ProductCreatedEvent>> future =
+//                kafkaTemplate.send("product-created-events-topic", productId, event);
+//
+//        future.whenComplete((result, ex) -> {
+//            if (ex == null) {
+//                log.info("ProductCreatedEvent published successfully");
+//            } else {
+//                log.error("ProductCreatedEvent failed to publish" + ex.getMessage());
+//            }
+//        });
+//        Synchronous way of waiting for the future to complete
+//        future.join();
 
         log.info("Returning productId: " + productId + " from createProduct method");
 
