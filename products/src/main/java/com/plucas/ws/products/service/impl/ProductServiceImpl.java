@@ -1,8 +1,9 @@
 package com.plucas.ws.products.service.impl;
 
 import com.plucas.ws.products.dto.ProductRequestDTO;
-import com.plucas.ws.products.events.ProductCreatedEvent;
+
 import com.plucas.ws.products.service.IProductService;
+import org.plucas.ws.core.dto.ProductCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
